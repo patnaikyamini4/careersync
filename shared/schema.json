@@ -1,0 +1,17 @@
+{
+  "match_score": 78,
+  "matched_skills": [
+    "Python",
+    "SQL",
+    "REST APIs"
+  ],
+  "missing_skills": [
+    "Docker",
+    "Kubernetes"
+  ],
+  "candidate_feedback": [
+    "Quantify your impact in the ML project bullet — add a metric.",
+    "Move your Python/SQL skills higher, they match the JD's top requirement."
+  ],
+  "recruiter_summary": "Strong technical fit, missing containerization experience."
+}
