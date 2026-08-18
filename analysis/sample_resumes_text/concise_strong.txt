@@ -1,0 +1,4 @@
+Fatima Sheikh — Backend Engineer, 3 YOE
+Python/FastAPI, PostgreSQL, Docker, Kubernetes (GKE), Terraform for IaC.
+Built the order-processing service at a logistics startup (Go-live: 99.95%
+uptime over 18 months). REST API design, OpenAPI specs, contract testing.

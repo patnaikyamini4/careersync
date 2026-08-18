@@ -1,0 +1,5 @@
+Arjun Mehta — Frontend Developer
+2 years building UIs in React and Vue. Strong with Tailwind CSS,
+Figma-to-code workflows, and accessibility audits. Built a component
+library used across 4 internal products. No backend or infrastructure
+experience; have used REST APIs as a consumer, never built one.

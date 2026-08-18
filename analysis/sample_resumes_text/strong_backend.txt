@@ -1,0 +1,7 @@
+Meera Nair — Backend Engineer
+5 years building and scaling REST APIs in Python (Django, FastAPI).
+Designed and optimized PostgreSQL schemas handling 10M+ rows.
+Containerized all services with Docker; ran production workloads on a
+Kubernetes cluster (EKS) with autoscaling and rolling deployments.
+Built CI/CD pipelines with GitHub Actions, cut deploy time from 40min to 6min.
+Comfortable with AWS (EC2, RDS, S3, IAM).

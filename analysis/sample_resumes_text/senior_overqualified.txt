@@ -1,0 +1,6 @@
+Dr. Ravi Krishnan — Principal Engineer / Distributed Systems
+14 years. Led backend architecture for a fintech platform processing
+2M transactions/day: Python and Go services, PostgreSQL with read
+replicas, Kubernetes on GCP with custom operators, full observability
+stack (Prometheus/Grafana). Published 3 internal RFCs on service mesh
+migration. Managed a team of 6 engineers.
