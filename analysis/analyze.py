@@ -1,28 +1,41 @@
 """
-Role A (Cherry) — Claude analysis engine.
+Role A (Cherry) — Analysis engine, FREE-TIER VERSION using Google Gemini.
 
-Public contract (this is what Nandu/Role D imports directly):
+Uses the current `google-genai` SDK (package: google-genai,
+import path: `from google import genai`).
+
+Same public contract as before, so nothing downstream changes:
     analyze_resume(resume_text: str, jd_text: str) -> dict
 
-The dict always matches shared/schema.json, or the function raises —
-it never hands the backend malformed data.
+Setup:
+  1. Go to https://aistudio.google.com/apikey
+  2. Sign in with a Google account, click "Create API key" — no card required
+  3. Put it in analysis/.env as:
+       GEMINI_API_KEY=your-key-here
+  4. pip install -r requirements.txt
 """
 
 import os
 import re
+import time
 import json
 from typing import Optional
 
 from dotenv import load_dotenv
-import anthropic
+from google import genai
+from google.genai import types
 from pydantic import ValidationError
 
 from schema import AnalysisResult
 
 load_dotenv()
 
-client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-MODEL = "claude-sonnet-4-6"
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
+# Stable, production model as of Aug 2026. If this 404s later (Google moves
+# fast), check https://ai.google.dev/gemini-api/docs/models for the current
+# stable model id and swap it here — nothing else in this file needs to change.
+MODEL = "gemini-3.6-flash"
 
 SYSTEM_PROMPT = """You are an expert technical recruiter and resume coach evaluating \
 a candidate's resume against a specific job description.
@@ -61,32 +74,43 @@ rather than fabricating an assessment.
 7. EDGE CASE — zero overlapping skills: return an empty matched_skills list \
 (never fabricate a match), and say so plainly in recruiter_summary.
 8. Never include any text outside the JSON object.
+9. Keep candidate_feedback bullets concise (under ~25 words each) so the full \
+response fits comfortably within the output limit.
 """
+
+GENERATE_CONFIG = types.GenerateContentConfig(
+    system_instruction=SYSTEM_PROMPT,
+    max_output_tokens=2048,  # raised from 1024 — thin_resume case worked,
+    # strong_match/partial_match were getting cut off mid-JSON on longer,
+    # more detailed feedback.
+    # NOTE: temperature/top_p/top_k are deprecated and ignored (or error)
+    # on gemini-3.6-flash and later — don't set them here.
+    automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+)
 
 
 def _extract_json(text: str) -> str:
-    """Strip markdown fences / stray text Claude sometimes wraps JSON in."""
+    """Strip markdown fences / stray text the model sometimes wraps JSON in."""
     text = text.strip()
     text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.MULTILINE).strip()
     match = re.search(r"\{.*\}", text, re.DOTALL)
     return match.group(0) if match else text
 
 
-def _call_claude(resume_text: str, jd_text: str, repair_note: Optional[str] = None) -> str:
+def _call_model(resume_text: str, jd_text: str, repair_note: Optional[str] = None) -> str:
     user_content = f"RESUME:\n{resume_text}\n\nJOB DESCRIPTION:\n{jd_text}"
     if repair_note:
         user_content = f"{repair_note}\n\n{user_content}"
 
-    response = client.messages.create(
+    response = client.models.generate_content(
         model=MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_content}],
+        contents=user_content,
+        config=GENERATE_CONFIG,
     )
-    return response.content[0].text
+    return response.text
 
 
-def analyze_resume(resume_text: str, jd_text: str, max_retries: int = 2) -> dict:
+def analyze_resume(resume_text: str, jd_text: str, max_retries: int = 3) -> dict:
     """
     Single entrypoint. Nandu imports this straight into the FastAPI endpoint:
         from analyze import analyze_resume
@@ -94,6 +118,12 @@ def analyze_resume(resume_text: str, jd_text: str, max_retries: int = 2) -> dict
 
     Always returns a dict matching shared/schema.json, or raises RuntimeError
     after exhausting retries (backend should catch this and return a 502/500).
+
+    Retries two distinct failure modes differently:
+      - Invalid/truncated JSON or schema mismatch -> repair prompt, no wait
+        (the model just needs to be told what was wrong).
+      - Transient API errors (503 overloaded, network blips) -> plain retry
+        with a short exponential backoff, no repair prompt needed.
     """
     if not resume_text or not resume_text.strip():
         raise ValueError("resume_text is empty — check Ankitha's extraction step upstream.")
@@ -104,9 +134,18 @@ def analyze_resume(resume_text: str, jd_text: str, max_retries: int = 2) -> dict
     repair_note = None
 
     for attempt in range(max_retries + 1):
-        raw = _call_claude(resume_text, jd_text, repair_note)
-        json_str = _extract_json(raw)
+        try:
+            raw = _call_model(resume_text, jd_text, repair_note)
+        except Exception as e:
+            # Transient server-side error (e.g. 503 UNAVAILABLE) — back off
+            # and retry with the same prompt, no repair note needed.
+            last_error = e
+            repair_note = None
+            if attempt < max_retries:
+                time.sleep(2 ** attempt)  # 1s, 2s, 4s
+            continue
 
+        json_str = _extract_json(raw)
         try:
             parsed = json.loads(json_str)
             validated = AnalysisResult(**parsed)
@@ -115,7 +154,8 @@ def analyze_resume(resume_text: str, jd_text: str, max_retries: int = 2) -> dict
             last_error = e
             repair_note = (
                 "Your previous response was not valid JSON matching the required "
-                f"schema (error: {e}). Return ONLY the corrected JSON object, "
+                f"schema (error: {e}). Keep feedback bullets concise so the response "
+                "fits the output limit. Return ONLY the corrected JSON object, "
                 "nothing else — no fences, no commentary."
             )
             continue
