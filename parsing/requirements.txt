@@ -1,0 +1,11 @@
+# Core (matches the handoff doc — required)
+pdfplumber
+python-docx
+
+# OCR fallback for scanned/image-based PDFs (the Kaggle dataset is
+# explicitly "resume PDFs converted from images" — you WILL hit these)
+pdf2image
+pytesseract
+
+# Only needed if you download the dataset via Kaggle CLI
+kaggle
