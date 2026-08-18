@@ -1,0 +1,3 @@
+We're hiring a Backend Engineer. Must have: Python, REST API design,
+SQL/PostgreSQL, Docker, Kubernetes experience, cloud (AWS/GCP/Azure).
+Nice to have: Go, CI/CD, microservices experience.

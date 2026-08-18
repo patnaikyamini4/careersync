@@ -1,0 +1,197 @@
+[
+  {
+    "file": "buzzword_shallow.txt",
+    "result": {
+      "match_score": 5,
+      "matched_skills": [],
+      "missing_skills": [
+        "Python",
+        "REST API Design",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "AWS / GCP / Azure",
+        "CI/CD",
+        "Microservices"
+      ],
+      "candidate_feedback": [
+        "Replace buzzwords like 'ninja rockstar' and 'modern technologies' with concrete backend languages, frameworks, and infrastructure tools.",
+        "Add structured Work Experience and Education sections, as the resume currently lacks concrete work history or credentials.",
+        "Clarify what 'various projects' and 'various tools' mean by describing actual projects, technical stacks, and measurable results.",
+        "Include an explicit Technical Skills section listing databases, cloud providers, and container technologies you have used."
+      ],
+      "recruiter_summary": "The candidate provides a brief summary filled with buzzwords but lacks work history and displays zero technical overlap with the Backend Engineer requirements."
+    }
+  },
+  {
+    "file": "career_changer.txt",
+    "result": {
+      "match_score": 30,
+      "matched_skills": [
+        "Python",
+        "REST APIs",
+        "SQL"
+      ],
+      "missing_skills": [
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "CI/CD",
+        "Microservices"
+      ],
+      "candidate_feedback": [
+        "Expand portfolio project descriptions to detail specific REST API endpoints and technical challenges solved using Flask.",
+        "Containerize your Flask applications using Docker before deploying to Render to directly demonstrate required DevOps skills.",
+        "Migrate SQLite databases in your portfolio projects to PostgreSQL to match explicit job requirements for relational databases.",
+        "Reframe 8 years of mechanical engineering experience to highlight transferable skills in system design and quantitative problem-solving."
+      ],
+      "recruiter_summary": "The candidate is a junior career-changer with foundational Python and Flask skills but lacks required production experience in Docker, Kubernetes, PostgreSQL, and cloud platforms."
+    }
+  },
+  {
+    "file": "concise_strong.txt",
+    "result": {
+      "match_score": 92,
+      "matched_skills": [
+        "Python",
+        "REST API Design",
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "Cloud (GCP)"
+      ],
+      "missing_skills": [
+        "Go",
+        "CI/CD",
+        "Microservices"
+      ],
+      "candidate_feedback": [
+        "Explicitly name GCP alongside GKE in your top-level skills section to maximize ATS keyword matching for cloud requirements.",
+        "Add details on any CI/CD deployment pipelines or automation tools used alongside your Terraform and Kubernetes stack.",
+        "Clarify whether the order-processing service was part of a microservices architecture to explicitly match the nice-to-have criteria."
+      ],
+      "recruiter_summary": "Fatima is an exceptional match, meeting all core requirements including Python, PostgreSQL, Docker, Kubernetes, and cloud experience."
+    }
+  },
+  {
+    "file": "mismatched_domain.txt",
+    "result": {
+      "match_score": 0,
+      "matched_skills": [],
+      "missing_skills": [
+        "Python",
+        "REST API design",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "AWS/GCP/Azure"
+      ],
+      "candidate_feedback": [
+        "Replace clinical credentials (ACLS, PALS, Epic) with computer science education or software projects if you are transitioning into tech.",
+        "Add personal or open-source software projects demonstrating backend skills like Python, SQL, and REST API development.",
+        "Include a dedicated Technical Skills section highlighting software tools, programming languages, and cloud infrastructure experience."
+      ],
+      "recruiter_summary": "The candidate is a Registered Nurse with no software development experience, resulting in zero skill overlap for this Backend Engineer role."
+    }
+  },
+  {
+    "file": "senior_overqualified.txt",
+    "result": {
+      "match_score": 92,
+      "matched_skills": [
+        "Python",
+        "REST API design",
+        "PostgreSQL",
+        "Kubernetes",
+        "GCP",
+        "Go",
+        "Microservices"
+      ],
+      "missing_skills": [
+        "Docker",
+        "CI/CD"
+      ],
+      "candidate_feedback": [
+        "Explicitly list Docker alongside your Kubernetes and custom operator experience.",
+        "Detail specific CI/CD deployment pipelines (e.g., ArgoCD, GitHub Actions) used for your services.",
+        "Specify the REST frameworks (e.g., FastAPI, Flask, Gin) used in your Python and Go microservices."
+      ],
+      "recruiter_summary": "Highly qualified Principal Engineer who easily meets and exceeds the core requirements, including Python, Go, PostgreSQL, and Kubernetes on GCP. Minor omissions include explicit mentions of Docker and CI/CD tooling."
+    }
+  },
+  {
+    "file": "strong_backend.txt",
+    "result": {
+      "match_score": 92,
+      "matched_skills": [
+        "Python",
+        "REST API",
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "CI/CD"
+      ],
+      "missing_skills": [
+        "Go",
+        "Microservices"
+      ],
+      "candidate_feedback": [
+        "Explicitly highlight microservices architecture experience in your bullet points to match the JD's preferred qualifications.",
+        "If you have any exposure to Go, add it to your technical skills list as it is a desired requirement.",
+        "Add throughput or latency metrics to the REST API summary line to further strengthen your impact story."
+      ],
+      "recruiter_summary": "Meera is an exceptional match who meets all core requirements including Python, PostgreSQL, Docker, Kubernetes, AWS, and CI/CD. The only missing preferred skill is Go."
+    }
+  },
+  {
+    "file": "thin_new_grad.txt",
+    "result": {
+      "match_score": 18,
+      "matched_skills": [
+        "Python"
+      ],
+      "missing_skills": [
+        "REST API Design",
+        "SQL / PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "Cloud (AWS/GCP/Azure)"
+      ],
+      "candidate_feedback": [
+        "Expand 'Python projects in college' into a dedicated Projects section detailing technical architecture, frameworks, and outcomes.",
+        "Include structured sections for Technical Skills, Experience, and Education to transform this brief summary into a standard tech resume.",
+        "Explicitly detail any hands-on coursework or personal project experience with databases, REST APIs, or containerization tools."
+      ],
+      "recruiter_summary": "Recent CS graduate with an extremely thin resume who only matches the Python requirement. Lacks essential backend, database, cloud, and containerization skills required for the role."
+    }
+  },
+  {
+    "file": "weak_frontend.txt",
+    "result": {
+      "match_score": 10,
+      "matched_skills": [],
+      "missing_skills": [
+        "Python",
+        "REST API design",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "Kubernetes",
+        "AWS/GCP/Azure",
+        "Go",
+        "CI/CD",
+        "Microservices"
+      ],
+      "candidate_feedback": [
+        "Reframe your experience consuming REST APIs to highlight any collaboration on schema design or data contracts with backend engineers.",
+        "Remove explicit disclaimers like 'no backend or infrastructure experience' and replace them with active learning projects using Python or SQL.",
+        "Add a dedicated Projects section demonstrating hands-on practice with Docker, databases, or basic server-side development to bridge the gap."
+      ],
+      "recruiter_summary": "The candidate is a purely frontend developer with no overlapping backend, database, or infrastructure experience required for this role."
+    }
+  }
+]

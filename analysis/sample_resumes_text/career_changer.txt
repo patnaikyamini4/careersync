@@ -1,0 +1,7 @@
+Sana Iqbal — Career Changer, ex-Mechanical Engineer
+8 years in mechanical design (SolidWorks, AutoCAD), no professional
+software experience. Completed a 6-month backend bootcamp: built 2
+portfolio projects with Python/Flask and SQLite, deployed one to Render.
+No experience with Docker, Kubernetes, or production-scale systems.
+Strong fundamentals, eager to learn, currently studying for AWS
+Cloud Practitioner cert.
