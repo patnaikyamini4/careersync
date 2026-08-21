@@ -1,0 +1,19 @@
+{
+  "match_score": 12,
+  "matched_skills": [],
+  "missing_skills": [
+    "Python",
+    "SQL",
+    "REST APIs",
+    "Machine Learning",
+    "Docker",
+    "Cloud Technologies"
+  ],
+  "candidate_feedback": [
+    "Rebuild your summary section to focus on modern software development rather than legacy SAP BW/BI administration.",
+    "Explicitly list programming languages and tools like Python, SQL, and Docker in your Technical Skills section.",
+    "Detail backend engineering contributions in your Software Developer roles rather than focusing on SAP data loading processes.",
+    "Highlight experience with REST APIs and cloud infrastructure if applicable from your past System Analyst experience."
+  ],
+  "recruiter_summary": "The candidate's background is primarily in SAP BW/BI consulting and legacy database modeling, showing zero overlap with the requested Python, Cloud, and Machine Learning tech stack."
+}

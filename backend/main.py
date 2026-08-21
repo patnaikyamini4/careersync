@@ -3,7 +3,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, UploadFile, Form, HTTPException
+from fastapi import FastAPI, UploadFile, Form, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
@@ -21,9 +21,9 @@ from schemas import AnalysisResult, HealthStatus
 import integrations
 
 
-# ---------------------------------------------------------
+# =========================================================
 # LOGGING
-# ---------------------------------------------------------
+# =========================================================
 
 logging.basicConfig(
     level=LOG_LEVEL,
@@ -33,9 +33,9 @@ logging.basicConfig(
 logger = logging.getLogger("careersync.backend")
 
 
-# ---------------------------------------------------------
+# =========================================================
 # FASTAPI APPLICATION
-# ---------------------------------------------------------
+# =========================================================
 
 app = FastAPI(
     title="CareerSync API",
@@ -44,21 +44,50 @@ app = FastAPI(
 )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # CORS
-# ---------------------------------------------------------
+# =========================================================
+#
+# Frontend currently runs on:
+#
+#   http://localhost:5173
+#   http://127.0.0.1:5173
+#
+# Backend runs on:
+#
+#   http://127.0.0.1:8000
+#
+# Both frontend origins are explicitly allowed.
+# =========================================================
+
+cors_origins = list(ALLOWED_ORIGINS)
+
+required_frontend_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+for origin in required_frontend_origins:
+    if origin not in cors_origins:
+        cors_origins.append(origin)
+
+logger.info(
+    "CORS allowed origins: %s",
+    cors_origins,
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=cors_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # ROOT ENDPOINT
-# ---------------------------------------------------------
+# =========================================================
 
 @app.get("/")
 async def root():
@@ -67,11 +96,14 @@ async def root():
     }
 
 
-# ---------------------------------------------------------
+# =========================================================
 # HEALTH CHECK
-# ---------------------------------------------------------
+# =========================================================
 
-@app.get("/health", response_model=HealthStatus)
+@app.get(
+    "/health",
+    response_model=HealthStatus,
+)
 async def health():
 
     return HealthStatus(
@@ -83,21 +115,24 @@ async def health():
     )
 
 
-# ---------------------------------------------------------
+# =========================================================
 # MAIN ANALYZE ENDPOINT
-# ---------------------------------------------------------
+# =========================================================
 
-@app.post("/analyze", response_model=AnalysisResult)
+@app.post(
+    "/analyze",
+    response_model=AnalysisResult,
+)
 async def analyze(
-    resume: UploadFile,
-    job_description: str = Form(...)
+    resume: UploadFile = File(...),
+    job_description: str = Form(...),
 ):
 
     request_start = time.monotonic()
 
-    # -----------------------------------------------------
+    # =====================================================
     # 1. VALIDATE FILE EXTENSION
-    # -----------------------------------------------------
+    # =====================================================
 
     filename = resume.filename or ""
 
@@ -113,9 +148,9 @@ async def analyze(
             ),
         )
 
-    # -----------------------------------------------------
+    # =====================================================
     # 2. VALIDATE JOB DESCRIPTION
-    # -----------------------------------------------------
+    # =====================================================
 
     jd_text = (job_description or "").strip()
 
@@ -129,13 +164,16 @@ async def analyze(
             ),
         )
 
-    # -----------------------------------------------------
+    # =====================================================
     # 3. READ UPLOADED FILE
-    # -----------------------------------------------------
+    # =====================================================
 
     contents = await resume.read()
 
+    # -----------------------------------------------------
     # Empty file
+    # -----------------------------------------------------
+
     if len(contents) == 0:
 
         raise HTTPException(
@@ -143,7 +181,10 @@ async def analyze(
             detail="Uploaded resume file is empty.",
         )
 
+    # -----------------------------------------------------
     # File size
+    # -----------------------------------------------------
+
     if len(contents) > MAX_FILE_SIZE_BYTES:
 
         raise HTTPException(
@@ -154,13 +195,15 @@ async def analyze(
             ),
         )
 
-    # -----------------------------------------------------
+    # =====================================================
     # 4. CREATE UNIQUE TEMPORARY FILE
-    # -----------------------------------------------------
+    # =====================================================
+
+    temp_path = None
 
     with tempfile.NamedTemporaryFile(
         suffix=ext,
-        delete=False
+        delete=False,
     ) as tmp:
 
         tmp.write(contents)
@@ -169,12 +212,12 @@ async def analyze(
 
     logger.info(
         "Received resume: %s",
-        filename
+        filename,
     )
 
-    # -----------------------------------------------------
+    # =====================================================
     # 5. PIPELINE
-    # -----------------------------------------------------
+    # =====================================================
 
     try:
 
@@ -223,7 +266,7 @@ async def analyze(
         logger.info(
             "Resume extraction successful. "
             "Characters extracted: %d",
-            len(resume_text)
+            len(resume_text),
         )
 
         # =================================================
@@ -238,7 +281,7 @@ async def analyze(
 
             raw_result = integrations.analyze_resume(
                 resume_text,
-                jd_text
+                jd_text,
             )
 
         except Exception:
@@ -298,14 +341,15 @@ async def analyze(
 
     finally:
 
-        # -------------------------------------------------
+        # =================================================
         # ALWAYS DELETE TEMPORARY FILE
-        # -------------------------------------------------
+        # =================================================
 
-        Path(temp_path).unlink(
-            missing_ok=True
-        )
+        if temp_path:
+            Path(temp_path).unlink(
+                missing_ok=True
+            )
 
-        logger.info(
-            "Temporary file cleaned up."
-        )
+            logger.info(
+                "Temporary file cleaned up."
+            )

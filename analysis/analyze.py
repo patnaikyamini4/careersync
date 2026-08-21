@@ -36,6 +36,7 @@ client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 # fast), check https://ai.google.dev/gemini-api/docs/models for the current
 # stable model id and swap it here — nothing else in this file needs to change.
 MODEL = "gemini-3.6-flash"
+PROVIDER = "gemini"
 
 SYSTEM_PROMPT = """You are an expert technical recruiter and resume coach evaluating \
 a candidate's resume against a specific job description.
